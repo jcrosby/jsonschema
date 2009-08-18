@@ -4,14 +4,6 @@
  *
  * Copyright (c) 2007 Kris Zyp SitePen (www.sitepen.com)
  * Licensed under the MIT (MIT-LICENSE.txt) license.
-   To use the validator call JSONSchema.validate with an instance object and an optional schema object.
-   If a schema is provided, it will be used to validate. If the instance object refers to a schema (self-validating), 
-   that schema will be used to validate and the schema parameter is not necessary (if both exist, 
-   both validations will occur). 
-   The validate method will return an array of validation errors. If there are no errors, then an 
-   empty list will be returned. A validation error will have two properties: 
-   "property" which indicates which property had the error
-   "message" which indicates what the error was
  */
 
 JSONSchema = {
