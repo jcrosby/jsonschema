@@ -1,0 +1,13 @@
+JSONSchema.js validates JSON Objects based on the JSONSchema proposal. The
+original JavaScript code was authored by Kris Zyp. This project exists to host
+the schema validator along with a complete set of unit tests. These
+tests serve as both an educational tool and a means to refactor with
+confidence.
+
+For more information on JSONSchema, see the Google Group:
+http://groups.google.com/group/json-schema
+
+Testing
+-------
+
+To run the test suite, simply open test/test.html in your browser.
