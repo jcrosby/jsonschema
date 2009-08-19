@@ -144,4 +144,14 @@ var tests = function($) {
     shouldBeValid(result, "should accept an object property value");
   });
 
+  jqUnit.test("mixed type validation", function() {
+    var schema = {type:"object", properties:{"foo": {"type":["string", "number"]}}};
+    var result = JSONSchema.validate({foo:"hello"}, schema);
+    shouldBeValid(result, "should accept a string property that is a member of a union type");
+    result = JSONSchema.validate({foo:3.0}, schema);
+    shouldBeValid(result, "should accept a number property that is a member of a union type");
+    result = JSONSchema.validate({foo:true}, schema);
+    shouldHaveOneError(result, "should reject a type that is not a member of the union type schema", "$.foo");
+  });
+
 }(jQuery);
