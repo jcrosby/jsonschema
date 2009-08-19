@@ -154,4 +154,12 @@ var tests = function($) {
     shouldHaveOneError(result, "should reject a type that is not a member of the union type schema", "$.foo");
   });
 
+  jqUnit.test("nested object schema validation", function() {
+    var schema = {type:"object", properties:{"foo": {"type":"object", properties:{"bar":{"type":"array"}}}}};
+    var result = JSONSchema.validate({foo:{bar:[1,2,3]}}, schema);
+    shouldBeValid(result, "should accept a nested object structure that conforms to the schema");
+    result = JSONSchema.validate({foo:{bar:true}}, schema);
+    shouldHaveOneError(result, "should reject a nested object that does not conform to the schema", "$.foo.bar");
+  });
+
 }(jQuery);
