@@ -102,4 +102,18 @@ var tests = function($) {
     shouldHaveOneError(result, "should reject a floating point number with greater precision than the specified maxDecimal", "$.foo");
   });
 
+  jqUnit.test("boolean property validation", function() {
+    var schema = {type:"object", properties:{"foo": {"type":"boolean"}}};
+    var result = JSONSchema.validate({foo:true}, schema);
+    shouldBeValid(result, "should accept an object with a true boolean property that conforms to the schema");
+    result = JSONSchema.validate({foo:false}, schema);
+    shouldBeValid(result, "should accept an object with a false boolean property that conforms to the schema");
+    result = JSONSchema.validate({foo:"true"}, schema);
+    shouldHaveOneError(result, "should reject a string containing a true boolean value", "$.foo");
+    result = JSONSchema.validate({foo:"false"}, schema);
+    shouldHaveOneError(result, "should reject a string containing a false boolean value", "$.foo");
+    result = JSONSchema.validate({foo:3}, schema);
+    shouldHaveOneError(result, "should reject an integer property that does not conform to the schema", "$.foo");
+  });
+
 }(jQuery);
