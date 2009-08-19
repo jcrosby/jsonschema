@@ -181,4 +181,22 @@ var tests = function($) {
     shouldHaveOneError(result, "should reject a value that is not within the enum set", "$.foo");
   });
 
+  jqUnit.test("singular disallowed property validation", function() {
+    var schema = {type:"object", properties:{"foo": {"disallow":"boolean"}}};
+    var result = JSONSchema.validate({foo:"hello"}, schema);
+    shouldBeValid(result, "should accept types that are not disallowed");
+    result = JSONSchema.validate({foo:true}, schema);
+    shouldHaveOneError(result, "should reject disallowed property types", "$.foo");
+  });
+
+  jqUnit.test("multiple disallowed property validation", function() {
+    var schema = {type:"object", properties:{"foo": {"disallow":["boolean", "string"]}}};
+    var result = JSONSchema.validate({foo:3}, schema);
+    shouldBeValid(result, "should accept types that are not disallowed");
+    result = JSONSchema.validate({foo:"hello"}, schema);
+    shouldHaveOneError(result, "should reject a string value that is within the disallowed type set", "$.foo");
+    result = JSONSchema.validate({foo:true}, schema);
+    shouldHaveOneError(result, "should reject a boolean value that is within the disallowed type set", "$.foo");
+  });
+
 }(jQuery);
