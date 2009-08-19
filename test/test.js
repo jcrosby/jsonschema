@@ -1,6 +1,7 @@
 var tests = function($) {
 
-  shouldHaveEmptyErrors = function(result) {
+  shouldBeValid = function(result, message) {
+    jqUnit.ok(result.valid, message);
     jqUnit.isSet(result.errors, [], "should return an empty errors array for valid objects");
   };
 
@@ -13,39 +14,32 @@ var tests = function($) {
 
   jqUnit.test("validation with an empty schema and empty object", function() {
     var result = JSONSchema.validate({}, {});
-    jqUnit.ok(result.valid, "should return valid for empty objects");
-    shouldHaveEmptyErrors(result);
+    shouldBeValid(result, "should return valid for empty objects");
   });
 
   jqUnit.test("validation with an empty schema and an arbitrary object", function() {
     var result = JSONSchema.validate({name:"foo"}, {});
-    jqUnit.ok(result.valid, "should return valid");
-    shouldHaveEmptyErrors(result);
+    shouldBeValid(result, "should return valid");
   });
 
   jqUnit.test("validation with a description", function() {
     var result = JSONSchema.validate({description:"description"}, {"description":"foo"});
-    jqUnit.ok(result.valid, "should ignore the description");
-    shouldHaveEmptyErrors(result);
+    shouldBeValid(result, "should ignore the description");
   });
 
   jqUnit.test("object type validation", function() {
     var schema = {"type":"object"};
     var result = JSONSchema.validate({}, schema);
-    jqUnit.ok(result.valid, "should understand empty objects");
-    shouldHaveEmptyErrors(result);
+    shouldBeValid(result, "should understand empty objects");
     result = JSONSchema.validate({name:"foo"}, schema);
-    jqUnit.ok(result.valid, "should understand basic objects");
-    shouldHaveEmptyErrors(result);
+    shouldBeValid(result, "should understand basic objects");
 
     // Not sure this should be the case, but documenting with a test for now...
     result = JSONSchema.validate([1,2,3], schema);
-    jqUnit.ok(result.valid, "should treat arrays as objects");
-    shouldHaveEmptyErrors(result);
-    
+    shouldBeValid(result, "should treat arrays as objects");
+
     result = JSONSchema.validate({foo:{bar:"nested"}}, schema);
-    jqUnit.ok(result.valid, "should understand nested objects");
-    shouldHaveEmptyErrors(result);
+    shouldBeValid(result, "should understand nested objects");
     result = JSONSchema.validate("hello", schema);
     shouldHaveOneError(result, "should mark strings as invalid", "$");
   });
@@ -53,11 +47,9 @@ var tests = function($) {
   jqUnit.test("array type validation", function() {
     var schema = {"type":"array"};
     var result = JSONSchema.validate([], schema);
-    jqUnit.ok(result.valid, "should understand empty arrays");
-    shouldHaveEmptyErrors(result);
+    shouldBeValid(result, "should understand empty arrays");
     result = JSONSchema.validate([1,2,3], schema);
-    jqUnit.ok(result.valid, "should understand basic arrays");
-    shouldHaveEmptyErrors(result);
+    shouldBeValid(result, "should understand basic arrays");
     result = JSONSchema.validate({foo:"bar"}, schema);
     shouldHaveOneError(result, "should mark objects as invalid", "$");
   });
@@ -65,18 +57,15 @@ var tests = function($) {
   jqUnit.test("integer property validation", function() {
     var schema = {type:"object", properties:{"foo": {"type":"integer", "minimum":2, "maximum":125}}};
     var result = JSONSchema.validate({foo:3}, schema);
-    jqUnit.ok(result.valid, "should accept an object with an integer property that conforms to the schema");
-    shouldHaveEmptyErrors(result);
+    shouldBeValid(result, "should accept an object with an integer property that conforms to the schema");
     result = JSONSchema.validate({foo:"bar"}, schema);
     shouldHaveOneError(result, "should reject an an object with a string that does not conform to the schema", "$.foo");
     result = JSONSchema.validate({foo:1}, schema);
     shouldHaveOneError(result, "should reject an integer that is less then the specified minimum", "$.foo");
     result = JSONSchema.validate({foo:2}, schema);
-    jqUnit.ok(result.valid, "should accept an integer property equal to the specified minimum");
-    shouldHaveEmptyErrors(result);
+    shouldBeValid(result, "should accept an integer property equal to the specified minimum");
     result = JSONSchema.validate({foo:125}, schema);
-    jqUnit.ok(result.valid, "should accept an integer property equal to the specified maximum");
-    shouldHaveEmptyErrors(result);
+    shouldBeValid(result, "should accept an integer property equal to the specified maximum");
     result = JSONSchema.validate({foo:126}, schema);
     shouldHaveOneError(result, "should reject an integer that is greater than the specified maximum", "$.foo");
   });
@@ -84,15 +73,13 @@ var tests = function($) {
   jqUnit.test("string property validation", function() {
     var schema = {type:"object", properties:{"foo": {"type":"string", "minLength":2, "maxLength":5, "pattern":/\w+/}}};
     var result = JSONSchema.validate({foo:"bar"}, schema);
-    jqUnit.ok(result.valid, "should accept an object with a string property that conforms to the schema");
-    shouldHaveEmptyErrors(result);
+    shouldBeValid(result, "should accept an object with a string property that conforms to the schema");
     result = JSONSchema.validate({foo:3}, schema);
     shouldHaveOneError(result, "should reject an object with an integer that does not conform to the schema", "$.foo");
     result = JSONSchema.validate({foo:"x"}, schema);
     shouldHaveOneError(result, "should reject a string of length less than minLength", "$.foo");
     result = JSONSchema.validate({foo:"hello"}, schema);
-    jqUnit.ok(result.valid, "should accept a string of length equal to maxLength");
-    jqUnit.isSet(result.errors, [], "should return an empty errors array for valid objects");
+    shouldBeValid(result, "should accept a string of length equal to maxLength");
     result = JSONSchema.validate({foo:"helloo"}, schema);
     shouldHaveOneError(result, "should reject a string of length greater than maxLength", "$.foo");
     result = JSONSchema.validate({foo:"1hello"}, schema);
