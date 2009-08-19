@@ -86,4 +86,20 @@ var tests = function($) {
     shouldHaveOneError(result, "should reject a string that does not match the given expression", "$.foo");
   });
 
+  jqUnit.test("number property validation", function() {
+    var schema = {type:"object", properties:{"foo": {"type":"number", "minimum":2.0, "maximum":2.5, "maxDecimal":3}}};
+    var result = JSONSchema.validate({foo:2}, schema);
+    shouldBeValid(result, "should accept an integer (a number subset)");
+    result = JSONSchema.validate({foo:2.0}, schema);
+    shouldBeValid(result, "should accept a floating point number equal to the specified minimum");
+    result = JSONSchema.validate({foo:"bar"}, schema);
+    shouldHaveOneError(result, "should reject an object with a string that does not conform to the schema", "$.foo");
+    result = JSONSchema.validate({foo:1.999}, schema);
+    shouldHaveOneError(result, "should reject a floating point number less than the specified minimum", "$.foo");
+    result = JSONSchema.validate({foo:2.501}, schema);
+    shouldHaveOneError(result, "should reject a floating point number greater than the specified maximum", "$.foo");
+    result = JSONSchema.validate({foo:2.4001}, schema);
+    shouldHaveOneError(result, "should reject a floating point number with greater precision than the specified maxDecimal", "$.foo");
+  });
+
 }(jQuery);
