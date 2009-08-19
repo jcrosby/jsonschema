@@ -162,4 +162,12 @@ var tests = function($) {
     shouldHaveOneError(result, "should reject a nested object that does not conform to the schema", "$.foo.bar");
   });
 
+  jqUnit.test("enum property validation", function() {
+    var schema = {type:"object", properties:{"foo": {"type":"string", "enum":["bar", "baz"]}}};
+    var result = JSONSchema.validate({foo:"bar"}, schema);
+    shouldBeValid(result, "should accept a value that is of the correct type and within the enum set");
+    result = JSONSchema.validate({foo:"foo"}, schema);
+    shouldHaveOneError(result, "should reject a value that is not within the enum set", "$.foo");
+  });
+
 }(jQuery);
