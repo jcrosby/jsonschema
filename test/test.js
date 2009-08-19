@@ -52,6 +52,17 @@ var tests = function($) {
     shouldBeValid(result, "should understand basic arrays");
     result = JSONSchema.validate({foo:"bar"}, schema);
     shouldHaveOneError(result, "should mark objects as invalid", "$");
+    schema = {type:"object", properties:{"foo":{"type":"array", "minItems":2, "maxItems":4}}};
+    result = JSONSchema.validate({foo:[1,2]}, schema);
+    shouldBeValid(result, "should accept arrays of the minimum specified size");
+    result = JSONSchema.validate({foo:[1,2,3]}, schema);
+    shouldBeValid(result, "should accept arrays of the correct size");
+    result = JSONSchema.validate({foo:[1,2,3,4]}, schema);
+    shouldBeValid(result, "should accept arrays of the maximum specified size");
+    result = JSONSchema.validate({foo:[1]}, schema);
+    shouldHaveOneError(result, "should reject arrays with less than the minimum required items", "$.foo");
+    result = JSONSchema.validate({foo:[1,2,3,4,5]}, schema);
+    shouldHaveOneError(result, "should reject arrays with more items than the specified maximum", "$.foo");
   });
 
   jqUnit.test("integer property validation", function() {
