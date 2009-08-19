@@ -116,4 +116,32 @@ var tests = function($) {
     shouldHaveOneError(result, "should reject an integer property that does not conform to the schema", "$.foo");
   });
 
+  jqUnit.test("null property validation", function() {
+    var schema = {type:"object", properties:{"foo": {"type":"null"}}};
+    var result = JSONSchema.validate({foo:null}, schema);
+    shouldBeValid(result, "should accept an object with a null property that conforms to the schema");
+    result = JSONSchema.validate({foo:"null"}, schema);
+    shouldHaveOneError(result, "should reject a string containing the word null", "$.foo");
+    result = JSONSchema.validate({foo:3}, schema);
+    shouldHaveOneError(result, "should reject an integer property that does not conform to the schema", "$.foo");
+  });
+
+  jqUnit.test("any property validation", function() {
+    var schema = {type:"object", properties:{"foo": {"type":"any"}}};
+    var result = JSONSchema.validate({foo:null}, schema);
+    shouldBeValid(result, "should accept a null property value");
+    result = JSONSchema.validate({foo:3}, schema);
+    shouldBeValid(result, "should accept an integer property value");
+    result = JSONSchema.validate({foo:3.0}, schema);
+    shouldBeValid(result, "should accept a number property value");
+    result = JSONSchema.validate({foo:"hello"}, schema);
+    shouldBeValid(result, "should accept a string property value");
+    result = JSONSchema.validate({foo:true}, schema);
+    shouldBeValid(result, "should accept a boolean property value");
+    result = JSONSchema.validate({foo:[1,2,3]}, schema);
+    shouldBeValid(result, "should accept an array property value");
+    result = JSONSchema.validate({foo:{bar:"baz"}}, schema);
+    shouldBeValid(result, "should accept an object property value");
+  });
+
 }(jQuery);
